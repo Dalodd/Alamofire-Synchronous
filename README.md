@@ -20,8 +20,8 @@ pod 'Alamofire-Synchronous', :git => 'https://github.com/zhuangluda/Alamofire-Sy
 ``` swift
 //json
 let response = Alamofire.request(.GET, "https://httpbin.org/get", parameters: ["foo": "bar"]).responseJSON()
-if let string = response.result.value {
-	print(string)
+if let json = response.result.value {
+	print(json)
 }
 
 //download with progress
