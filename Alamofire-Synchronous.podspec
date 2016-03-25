@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "Alamofire-Synchronous"
-  s.version      = "0.0.1"
+  s.version      = "0.0.2"
   s.summary      = "Synchronous requests for Alamofire"
   s.homepage     = "https://github.com/zhuangluda/Alamofire-Synchronous"
   s.license = 'MIT'

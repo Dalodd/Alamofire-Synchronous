@@ -12,7 +12,7 @@ Synchronous requests for Alamofire
 ### Installation
 
 ``` 
-pod 'Alamofire-Synchronous', :git => 'https://github.com/zhuangluda/Alamofire-Synchronous.git'
+pod 'Alamofire-Synchronous', :git => 'https://github.com/Dalodd/Alamofire-Synchronous.git'
 ```
 
 ### Usage
