@@ -28,7 +28,7 @@ extension Request {
     public func responseData() -> Response<NSData, NSError> {
         let semaphore = dispatch_semaphore_create(0)
         var result: Response<NSData, NSError>!
-        self.responseData({ response in
+        self.responseData(completionHandler: { response in
             result = response
             dispatch_semaphore_signal(semaphore);
         })
