@@ -12,7 +12,7 @@ extension Request {
     public func response() -> (request: NSURLRequest?, response: NSHTTPURLResponse?, data: NSData?, error: NSError?) {
         let semaphore = dispatch_semaphore_create(0)
         var result: (request: NSURLRequest?, response: NSHTTPURLResponse?, data: NSData?, error: NSError?)!
-        self.response(completionHandler: { request, response, data, error in
+        self.response(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { request, response, data, error in
             result = (
                 request: request,
                 response: response,
@@ -28,7 +28,7 @@ extension Request {
     public func responseData() -> Response<NSData, NSError> {
         let semaphore = dispatch_semaphore_create(0)
         var result: Response<NSData, NSError>!
-        self.responseData(completionHandler: { response in
+        self.responseData(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
             result = response
             dispatch_semaphore_signal(semaphore);
         })
@@ -39,7 +39,7 @@ extension Request {
     public func responseJSON(options options: NSJSONReadingOptions = .AllowFragments) -> Response<AnyObject, NSError> {
         let semaphore = dispatch_semaphore_create(0)
         var result: Response<AnyObject, NSError>!
-        self.responseJSON(options: options, completionHandler: {response in
+        self.responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), options: options, completionHandler: {response in
             result = response
             dispatch_semaphore_signal(semaphore);
         })
@@ -50,7 +50,7 @@ extension Request {
     public func responseString(encoding encoding: NSStringEncoding? = nil) -> Response<String, NSError> {
         let semaphore = dispatch_semaphore_create(0)
         var result: Response<String, NSError>!
-        self.responseString(encoding: encoding, completionHandler: { response in
+        self.responseString(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), encoding: encoding, completionHandler: { response in
             result = response
             dispatch_semaphore_signal(semaphore);
         })
@@ -61,7 +61,7 @@ extension Request {
     public func responsePropertyList(options options: NSPropertyListReadOptions = NSPropertyListReadOptions()) -> Response<AnyObject, NSError> {
         let semaphore = dispatch_semaphore_create(0)
         var result: Response<AnyObject, NSError>!
-        self.responsePropertyList(options: options, completionHandler: { response in
+        self.responsePropertyList(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), options: options, completionHandler: { response in
             result = response
             dispatch_semaphore_signal(semaphore);
         })

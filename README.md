@@ -2,8 +2,6 @@
 
 Synchronous requests for Alamofire
 
-**CAUTION: It can't be used in the main_queue.**
-
 ### Requirements
 
 * iOS 8.0+ / Mac OS X 10.9+ / tvOS 9.0+ / watchOS 2.0+
