@@ -11,8 +11,8 @@ Synchronous requests for Alamofire
 
 ### Installation
 
-``` 
-pod 'Alamofire-Synchronous', :git => 'https://github.com/Dalodd/Alamofire-Synchronous.git'
+``` ruby
+pod 'Alamofire-Synchronous', '~> 3.0'
 ```
 
 ### Usage
