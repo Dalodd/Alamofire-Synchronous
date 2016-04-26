@@ -1,4 +1,4 @@
-# Alamofire-Synchronous
+# Alamofire+Synchronous
 
 Synchronous requests for Alamofire
 
@@ -16,6 +16,17 @@ pod 'Alamofire-Synchronous', :git => 'https://github.com/Dalodd/Alamofire-Synchr
 ```
 
 ### Usage
+
+```swift
+import Alamofire
+import Alamofire_Synchronous
+```
+
+**Difference between Alamofire**: just removed the `completionHandler` parameter in response* methods.
+
+
+
+Example:
 
 ``` swift
 //json
@@ -47,6 +58,8 @@ if let error = response.error {
 	print("Downloaded file successfully")
 }
 ```
+
+For more usage, see [Alamofire's documents](https://github.com/Alamofire/Alamofire#usage).
 
 ### License
 
