@@ -17,19 +17,14 @@ extension DataRequest {
      
      - returns: The response.
      */
-    public func response() -> (request: NSURLRequest?, response: HTTPURLResponse?, data: NSData?, error: NSError?) {
+    public func response() -> DefaultDataResponse {
         
         let semaphore = DispatchSemaphore(value: 0)
-        var result: (request: NSURLRequest?, response: HTTPURLResponse?, data: NSData?, error: NSError?)!
+        var result: DefaultDataResponse!
 
         self.response(queue: DispatchQueue.global(qos: .default)){ response in
             
-            result = (
-                request: request,
-                response: response,
-                data: data,
-                error: error
-            )
+            result = response
             
             semaphore.signal()
         }
