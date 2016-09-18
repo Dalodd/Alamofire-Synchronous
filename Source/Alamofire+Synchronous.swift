@@ -9,7 +9,7 @@
 import Foundation
 import Alamofire
 
-extension Request {
+extension DataRequest {
     
     
     /**
@@ -17,12 +17,12 @@ extension Request {
      
      - returns: The response.
      */
-    @warn_unused_result public func response() -> (request: NSURLRequest?, response: NSHTTPURLResponse?, data: NSData?, error: NSError?) {
+    public func response() -> (request: NSURLRequest?, response: HTTPURLResponse?, data: NSData?, error: NSError?) {
         
-        let semaphore = dispatch_semaphore_create(0)
-        var result: (request: NSURLRequest?, response: NSHTTPURLResponse?, data: NSData?, error: NSError?)!
-        
-        self.response(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { request, response, data, error in
+        let semaphore = DispatchSemaphore(value: 0)
+        var result: (request: NSURLRequest?, response: HTTPURLResponse?, data: NSData?, error: NSError?)!
+
+        self.response(queue: DispatchQueue.global(qos: .default)){ response in
             
             result = (
                 request: request,
@@ -31,10 +31,10 @@ extension Request {
                 error: error
             )
             
-            dispatch_semaphore_signal(semaphore)
-        })
+            semaphore.signal()
+        }
         
-        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER)
+        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
         
         return result
     }
@@ -45,20 +45,20 @@ extension Request {
      
      - returns: The response.
      */
-    @warn_unused_result public func responseData() -> Response<NSData, NSError> {
+    public func responseData() -> DataResponse<Data> {
         
-        let semaphore = dispatch_semaphore_create(0)
+        let semaphore = DispatchSemaphore(value: 0)
         
-        var result: Response<NSData, NSError>!
+        var result: DataResponse<Data>!
         
-        self.responseData(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler: { response in
+        self.responseData(queue: DispatchQueue.global(qos: .default)) { response in
             
             result = response
-            dispatch_semaphore_signal(semaphore)
+            semaphore.signal()
             
-        })
+        }
         
-        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER)
+        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
         
         return result
     }
@@ -71,20 +71,20 @@ extension Request {
      
      - returns: The response.
      */
-    @warn_unused_result public func responseJSON(options options: NSJSONReadingOptions = .AllowFragments) -> Response<AnyObject, NSError> {
+    public func responseJSON(options: JSONSerialization.ReadingOptions = .allowFragments) -> DataResponse<Any> {
         
-        let semaphore = dispatch_semaphore_create(0)
+        let semaphore = DispatchSemaphore(value: 0)
         
-        var result: Response<AnyObject, NSError>!
+        var result: DataResponse<Any>!
         
-        self.responseJSON(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), options: options, completionHandler: {response in
+        self.responseJSON(queue: DispatchQueue.global(qos: .default), options: options) { response in
             
             result = response
-            dispatch_semaphore_signal(semaphore)
+            semaphore.signal()
             
-        })
+        }
         
-        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER)
+        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
         
         return result
     }
@@ -99,20 +99,19 @@ extension Request {
      
      - returns: The response.
      */
-    @warn_unused_result public func responseString(encoding encoding: NSStringEncoding? = nil) -> Response<String, NSError> {
+    public func responseString(encoding: String.Encoding? = nil) -> DataResponse<String> {
         
-        let semaphore = dispatch_semaphore_create(0)
+        let semaphore = DispatchSemaphore(value: 0)
         
-        var result: Response<String, NSError>!
-        
-        self.responseString(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), encoding: encoding, completionHandler: { response in
+        var result: DataResponse<String>!
+        self.responseString(queue: DispatchQueue.global(qos: .default), encoding: encoding){ response in
             
             result = response
-            dispatch_semaphore_signal(semaphore)
+            semaphore.signal()
             
-        })
+        }
         
-        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER)
+        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
         
         return result
     }
@@ -125,20 +124,20 @@ extension Request {
      
      - returns: The response.
      */
-    @warn_unused_result public func responsePropertyList(options options: NSPropertyListReadOptions = NSPropertyListReadOptions()) -> Response<AnyObject, NSError> {
+    public func responsePropertyList(options: PropertyListSerialization.ReadOptions = PropertyListSerialization.ReadOptions()) -> DataResponse<Any> {
         
-        let semaphore = dispatch_semaphore_create(0)
+        let semaphore = DispatchSemaphore(value: 0)
         
-        var result: Response<AnyObject, NSError>!
+        var result: DataResponse<Any>!
         
-        self.responsePropertyList(queue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), options: options, completionHandler: { response in
+        self.responsePropertyList(queue: DispatchQueue.global(qos: .default), options: options) { response in
             
             result = response
-            dispatch_semaphore_signal(semaphore)
+            semaphore.signal()
             
-        })
+        }
         
-        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER)
+        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
         
         return result
     }
