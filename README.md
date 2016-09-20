@@ -13,7 +13,7 @@ Synchronous requests for Alamofire
 ### Installation
 
 ``` ruby
-pod 'Alamofire-Synchronous', '~> 3.0'
+pod 'Alamofire-Synchronous', '~> 4.0'
 ```
 
 ### Usage
