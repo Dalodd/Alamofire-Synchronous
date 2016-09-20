@@ -40,10 +40,10 @@ if let json = response.result.value {
 let response = Alamofire.download("https://httpbin.org/stream/100", method: .get, to: destination).downloadProgress { progress in
         print("Download Progress: \(progress.fractionCompleted)")
 }.response()
-if let error = response.error {
-	print("Failed with error: \(error)")
-} else {
+if response.result.isSuccess {
 	print("Downloaded file successfully")
+}else{
+	print("Failed with error")
 }
 
 //or without
@@ -51,7 +51,7 @@ let response = Alamofire.download"https://httpbin.org/stream/100", method: .get,
 if response.result.isSuccess {
 	print("Downloaded file successfully")
 }else{
-	print("Failed with error: \(error)")
+	print("Failed with error")
 }
 ```
 
