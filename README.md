@@ -26,15 +26,7 @@ pod 'Alamofire-Synchronous', '~> 3.0'
 
 ### Known issues
 
-**If you use this component from the main queue**:
-
-the request will block the main queue, and the following tasks that need to running from main queue will be executed after current synchronous request finished. so, you will unable to update UI during this request haven't finish, such as update UI in `downloadProgress` or `uploadProgress`clourse.
-
-如果你在主队列中执行同步请求：
-
 **If you execute synchronous requests from the main queue:**
-
-主队列中之后的任务会被推迟到同步请求结束后才会开始执行（包括更新 UI）, 原因是你在主队列中执行了同步请求。另外，在 Alamofire 4 中， `downloadProgress` 和 `uploadProgress`方法新增了参数: queue 并且其默认值为`DispatchQueue.main`，所以你需要修改此参数的值为非主队列。
 
 The following tasks in the main queue after the synchronous request finished executation will be deferred to execute (including UI updates) because that you are executing the synchronous request from the main queue at the same time. On the other hand, in Alamofire 4,  New added parameters of  the methods of`downloadProgress` and `uploadProgres`: `queue`with the default value as`DispatchQueue.main`, therefore,  you need to reset the value of the new added parameters as Non-main queue.
 
