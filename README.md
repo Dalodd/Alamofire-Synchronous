@@ -28,7 +28,7 @@ pod 'Alamofire-Synchronous', '~> 3.0'
 
 **If you execute synchronous requests from the main queue:**
 
-The following tasks in the main queue after the synchronous request finished executation will be deferred to execute (including UI updates) because that you are executing the synchronous request from the main queue at the same time. On the other hand, in Alamofire 4,  New added parameters of  the methods of`downloadProgress` and `uploadProgres`: `queue`with the default value as`DispatchQueue.main`, therefore,  you need to reset the value of the new added parameters as Non-main queue.
+The following tasks in the main queue, including UI updates, won't be execute until the synchronous request finished. in Alamofire 4,  methods `downloadProgress` and `uploadProgress` added  a new parameter `queue`, and its default value is  `DispatchQueue.main`.  it's better to reset it as Non-main queue If you execute synchronous requests from the main queue.
 
 example:
 
@@ -75,7 +75,7 @@ import Alamofire
 import Alamofire_Synchronous
 ```
 
-**The usage differences between Alamofire and Alamofire_Synchronous**: The parameters of `queue` and  `completionHandler` in the response* methods simply need to be removed out by using the returned value from the response* methods.
+**The usage differences between Alamofire and Alamofire_Synchronous**: Simply remove  parameters: `queue` and  `completionHandler` in response* methods.
 
 
 
