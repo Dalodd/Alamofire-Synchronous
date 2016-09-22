@@ -12,9 +12,69 @@ Synchronous requests for Alamofire
 
 ### Installation
 
-``` ruby
+For Alamofire 4.0+:
+
+```ruby
 pod 'Alamofire-Synchronous', '~> 4.0'
 ```
+
+For Alamofire 3.0+:
+
+``` ruby
+pod 'Alamofire-Synchronous', '~> 3.0'
+```
+
+### Known issues
+
+**If you use this component from the main queue**:
+
+the request will block the main queue, and the following tasks that need to running from main queue will be executed after current synchronous request finished. so, you will unable to update UI during this request haven't finish, such as update UI in `downloadProgress` or `uploadProgress`clourse.
+
+如果你在主队列中执行同步请求：
+
+**If you execute synchronous requests from the main queue:**
+
+主队列中之后的任务会被推迟到同步请求结束后才会开始执行（包括更新 UI）, 原因是你在主队列中执行了同步请求。另外，在 Alamofire 4 中， `downloadProgress` 和 `uploadProgress`方法新增了参数: queue 并且其默认值为`DispatchQueue.main`，所以你需要修改此参数的值为非主队列。
+
+The following tasks in the main queue after the synchronous request finished executation will be deferred to execute (including UI updates) because that you are executing the synchronous request from the main queue at the same time. On the other hand, in Alamofire 4,  New added parameters of  the methods of`downloadProgress` and `uploadProgres`: `queue`with the default value as`DispatchQueue.main`, therefore,  you need to reset the value of the new added parameters as Non-main queue.
+
+example:
+
+```swift
+// from the main queue (**not recommended**):
+let response = Alamofire.download("https://httpbin.org/stream/100", method: .get, to: destination).downloadProgress { progress in
+    	// Codes at here will be delayed before the synchronous request finished running.
+    	print("Download Progress: \(progress.fractionCompleted)")
+    
+    }.response()
+    
+if let error = response.error {
+    print("Failed with error: \(error)")
+}else{
+    print("Downloaded file successfully")
+}
+```
+
+```swift
+// from the main queue (**not recommended**):
+let response = Alamofire.download("https://httpbin.org/stream/100", method: .get, to: destination).downloadProgress(queue: DispatchQueue.global(qos: .default)) { progress in
+		// Codes at here will not be delayed
+        print("Download Progress: \(progress.fractionCompleted)")
+    
+        DispatchQueue.main.async {
+            // code at here will be delayed before the synchronous finished.
+        }
+    
+    }.response()
+    
+if let error = response.error {
+    print("Failed with error: \(error)")
+}else{
+    print("Downloaded file successfully")
+}
+```
+
+
 
 ### Usage
 
@@ -23,35 +83,31 @@ import Alamofire
 import Alamofire_Synchronous
 ```
 
-**Difference between Alamofire**: just removed the `completionHandler` parameter in response* methods.
+**The usage differences between Alamofire and Alamofire_Synchronous**: The parameters of `queue` and  `completionHandler` in the response* methods simply need to be removed out by using the returned value from the response* methods.
 
 
 
-Example:
+Example(For Alamofire 4.0+):
 
 ``` swift
-//json
-let response = Alamofire.request("https://httpbin.org/get", method: .get, , parameters: ["foo": "bar"]).responseJSON()
+//get request and response json
+let response = Alamofire.request("https://httpbin.org/get", parameters: ["foo": "bar"]).responseJSON()
 if let json = response.result.value {
 	print(json)
 }
 
-//download with progress
-let response = Alamofire.download("https://httpbin.org/stream/100", method: .get, to: destination).downloadProgress { progress in
-        print("Download Progress: \(progress.fractionCompleted)")
-}.response()
-if response.result.isSuccess {
-	print("Downloaded file successfully")
-}else{
-	print("Failed with error")
+// post request and response json(with default options)
+let response = Alamofire.request("https://httpbin.org/post", method: .post, parameters: ["foo": "bar"]).responseJSON(options: .allowFragments)
+if let json = response.result.value {
+    print(json)
 }
 
-//or without
-let response = Alamofire.download"https://httpbin.org/stream/100", method: .get, to: destination).response()
-if response.result.isSuccess {
-	print("Downloaded file successfully")
+// download
+let response = Alamofire.download("https://httpbin.org/stream/100", method: .get, to: destination).response()
+if let error = response.error {
+    print("Failed with error: \(error)")
 }else{
-	print("Failed with error")
+    print("Downloaded file successfully")
 }
 ```
 
