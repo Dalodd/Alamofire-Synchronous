@@ -21,12 +21,36 @@ extension DataRequest {
         
         let semaphore = DispatchSemaphore(value: 0)
         var result: DefaultDataResponse!
-
-        self.response(queue: DispatchQueue.global(qos: .default)){ response in
+        
+        self.response(queue: DispatchQueue.global(qos: .default)) { response in
             
             result = response
-            
             semaphore.signal()
+            
+        }
+        
+        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
+        
+        return result
+    }
+    
+    /**
+     Wait for the request to finish then return the response value.
+     
+     - parameter responseSerializer: The response serializer responsible for serializing the request, response,
+     and data.
+     - returns: The response.
+     */
+    public func response<T: DataResponseSerializerProtocol>(responseSerializer: T) -> DataResponse<T.SerializedObject> {
+        
+        let semaphore = DispatchSemaphore(value: 0)
+        var result: DataResponse<T.SerializedObject>!
+        
+        self.response(queue: DispatchQueue.global(qos: .default), responseSerializer: responseSerializer) { response in
+            
+            result = response
+            semaphore.signal()
+            
         }
         
         _ = semaphore.wait(timeout: DispatchTime.distantFuture)
@@ -41,21 +65,7 @@ extension DataRequest {
      - returns: The response.
      */
     public func responseData() -> DataResponse<Data> {
-        
-        let semaphore = DispatchSemaphore(value: 0)
-        
-        var result: DataResponse<Data>!
-        
-        self.responseData(queue: DispatchQueue.global(qos: .default)) { response in
-            
-            result = response
-            semaphore.signal()
-            
-        }
-        
-        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
-        
-        return result
+        return response(responseSerializer: DataRequest.dataResponseSerializer())
     }
     
     
@@ -67,21 +77,7 @@ extension DataRequest {
      - returns: The response.
      */
     public func responseJSON(options: JSONSerialization.ReadingOptions = .allowFragments) -> DataResponse<Any> {
-        
-        let semaphore = DispatchSemaphore(value: 0)
-        
-        var result: DataResponse<Any>!
-        
-        self.responseJSON(queue: DispatchQueue.global(qos: .default), options: options) { response in
-            
-            result = response
-            semaphore.signal()
-            
-        }
-        
-        _ = semaphore.wait(timeout: DispatchTime.distantFuture)
-        
-        return result
+        return response(responseSerializer: DataRequest.jsonResponseSerializer(options: options))
     }
     
     
@@ -95,11 +91,35 @@ extension DataRequest {
      - returns: The response.
      */
     public func responseString(encoding: String.Encoding? = nil) -> DataResponse<String> {
+        return response(responseSerializer: DataRequest.stringResponseSerializer(encoding: encoding))
+    }
+    
+    
+    /**
+     Wait for the request to finish then return the response value.
+     
+     - parameter options: The property list reading options. Defaults to `[]`.
+     
+     - returns: The response.
+     */
+    public func responsePropertyList(options: PropertyListSerialization.ReadOptions = PropertyListSerialization.ReadOptions()) -> DataResponse<Any> {
+        return response(responseSerializer: DataRequest.propertyListResponseSerializer(options: options))
+    }
+}
+
+
+extension DownloadRequest {
+    /**
+     Wait for the request to finish then return the response value.
+     
+     - returns: The response.
+     */
+    public func response() -> DefaultDownloadResponse {
         
         let semaphore = DispatchSemaphore(value: 0)
+        var result: DefaultDownloadResponse!
         
-        var result: DataResponse<String>!
-        self.responseString(queue: DispatchQueue.global(qos: .default), encoding: encoding){ response in
+        self.response(queue: DispatchQueue.global(qos: .default)) { response in
             
             result = response
             semaphore.signal()
@@ -115,17 +135,16 @@ extension DataRequest {
     /**
      Wait for the request to finish then return the response value.
      
-     - parameter options: The property list reading options. `0` by default.
-     
+     - parameter responseSerializer: The response serializer responsible for serializing the request, response,
+     and data.
      - returns: The response.
      */
-    public func responsePropertyList(options: PropertyListSerialization.ReadOptions = PropertyListSerialization.ReadOptions()) -> DataResponse<Any> {
+    public func response<T: DownloadResponseSerializerProtocol>(responseSerializer: T) -> DownloadResponse<T.SerializedObject> {
         
         let semaphore = DispatchSemaphore(value: 0)
+        var result: DownloadResponse<T.SerializedObject>!
         
-        var result: DataResponse<Any>!
-        
-        self.responsePropertyList(queue: DispatchQueue.global(qos: .default), options: options) { response in
+        self.response(queue: DispatchQueue.global(qos: .background), responseSerializer: responseSerializer) { response in
             
             result = response
             semaphore.signal()
@@ -135,5 +154,50 @@ extension DataRequest {
         _ = semaphore.wait(timeout: DispatchTime.distantFuture)
         
         return result
+    }
+    
+    
+    /**
+     Wait for the request to finish then return the response value.
+     
+     - returns: The response.
+     */
+    public func responseData() -> DownloadResponse<Data> {
+        return response(responseSerializer: DownloadRequest.dataResponseSerializer())
+    }
+    
+    /**
+     Wait for the request to finish then return the response value.
+     
+     - parameter options: The JSON serialization reading options. `.AllowFragments` by default.
+     
+     - returns: The response.
+     */
+    public func responseJSON(options: JSONSerialization.ReadingOptions = .allowFragments) -> DownloadResponse<Any> {
+        return response(responseSerializer: DownloadRequest.jsonResponseSerializer(options: options))
+    }
+    
+    /**
+     Wait for the request to finish then return the response value.
+     
+     - parameter encoding: The string encoding. If `nil`, the string encoding will be determined from the
+     server response, falling back to the default HTTP default character set,
+     ISO-8859-1.
+     
+     - returns: The response.
+     */
+    public func responseString(encoding: String.Encoding? = nil) -> DownloadResponse<String> {
+        return response(responseSerializer: DownloadRequest.stringResponseSerializer(encoding: encoding))
+    }
+    
+    /**
+     Wait for the request to finish then return the response value.
+     
+     - parameter options: The property list reading options. Defaults to `[]`.
+     
+     - returns: The response.
+     */
+    public func responsePropertyList(options: PropertyListSerialization.ReadOptions = PropertyListSerialization.ReadOptions()) -> DownloadResponse<Any> {
+        return response(responseSerializer: DownloadRequest.propertyListResponseSerializer(options: options))
     }
 }
