@@ -4,15 +4,16 @@ Synchronous requests for Alamofire
 
 ### Requirements
 
-* iOS 8.0+ / Mac OS X 10.9+ / tvOS 9.0+ / watchOS 2.0+
+* iOS 9.0+ / Mac OS X 10.11+ / tvOS 9.0+ / watchOS 2.0+
 
 
-* Xcode 7.1+
+* Xcode 8.0+
+* Swift 3.0+
 
 ### Installation
 
 ``` ruby
-pod 'Alamofire-Synchronous', '~> 3.0'
+pod 'Alamofire-Synchronous', '~> 4.0'
 ```
 
 ### Usage
@@ -30,32 +31,27 @@ Example:
 
 ``` swift
 //json
-let response = Alamofire.request(.GET, "https://httpbin.org/get", parameters: ["foo": "bar"]).responseJSON()
+let response = Alamofire.request("https://httpbin.org/get", method: .get, , parameters: ["foo": "bar"]).responseJSON()
 if let json = response.result.value {
 	print(json)
 }
 
 //download with progress
-let response = Alamofire.download(.GET, "https://httpbin.org/stream/100", destination: destination).progress { bytesRead, totalBytesRead, totalBytesExpectedToRead in
-	print(bytesRead)
-	// This closure is NOT called on the main queue for performance
-	// reasons. To update your ui, dispatch to the main queue.
-	dispatch_async(dispatch_get_main_queue()) {
-		print("Total bytes read on main queue: \(totalBytesRead)")
-	}
+let response = Alamofire.download("https://httpbin.org/stream/100", method: .get, to: destination).downloadProgress { progress in
+        print("Download Progress: \(progress.fractionCompleted)")
 }.response()
-if let error = response.error {
-	print("Failed with error: \(error)")
-} else {
+if response.result.isSuccess {
 	print("Downloaded file successfully")
+}else{
+	print("Failed with error")
 }
 
 //or without
-let response = Alamofire.download(.GET, "https://httpbin.org/stream/100", destination: destination).response()
-if let error = response.error {
-	print("Failed with error: \(error)")
-} else {
+let response = Alamofire.download"https://httpbin.org/stream/100", method: .get, to: destination).response()
+if response.result.isSuccess {
 	print("Downloaded file successfully")
+}else{
+	print("Failed with error")
 }
 ```
 
