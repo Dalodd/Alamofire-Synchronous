@@ -17,10 +17,10 @@ extension DataRequest {
      
      - returns: The response.
      */
-    public func response() -> DefaultDataResponse {
+    public func response() -> DataResponse<Data?> {
         
         let semaphore = DispatchSemaphore(value: 0)
-        var result: DefaultDataResponse!
+        var result: DataResponse<Data?>!
         
         self.response(queue: DispatchQueue.global(qos: .default)) { response in
             
@@ -65,7 +65,7 @@ extension DataRequest {
      - returns: The response.
      */
     public func responseData() -> DataResponse<Data> {
-        return response(responseSerializer: DataRequest.dataResponseSerializer())
+        return response(responseSerializer: DataResponseSerializer())
     }
     
     
@@ -77,7 +77,7 @@ extension DataRequest {
      - returns: The response.
      */
     public func responseJSON(options: JSONSerialization.ReadingOptions = .allowFragments) -> DataResponse<Any> {
-        return response(responseSerializer: DataRequest.jsonResponseSerializer(options: options))
+        return response(responseSerializer: JSONResponseSerializer(options: options))
     }
     
     
@@ -91,19 +91,7 @@ extension DataRequest {
      - returns: The response.
      */
     public func responseString(encoding: String.Encoding? = nil) -> DataResponse<String> {
-        return response(responseSerializer: DataRequest.stringResponseSerializer(encoding: encoding))
-    }
-    
-    
-    /**
-     Wait for the request to finish then return the response value.
-     
-     - parameter options: The property list reading options. Defaults to `[]`.
-     
-     - returns: The response.
-     */
-    public func responsePropertyList(options: PropertyListSerialization.ReadOptions = PropertyListSerialization.ReadOptions()) -> DataResponse<Any> {
-        return response(responseSerializer: DataRequest.propertyListResponseSerializer(options: options))
+        return response(responseSerializer: StringResponseSerializer(encoding: encoding))
     }
 }
 
@@ -114,10 +102,10 @@ extension DownloadRequest {
      
      - returns: The response.
      */
-    public func response() -> DefaultDownloadResponse {
+    public func response() -> DownloadResponse<URL?> {
         
         let semaphore = DispatchSemaphore(value: 0)
-        var result: DefaultDownloadResponse!
+        var result: DownloadResponse<URL?>!
         
         self.response(queue: DispatchQueue.global(qos: .default)) { response in
             
@@ -163,7 +151,7 @@ extension DownloadRequest {
      - returns: The response.
      */
     public func responseData() -> DownloadResponse<Data> {
-        return response(responseSerializer: DownloadRequest.dataResponseSerializer())
+        return response(responseSerializer: DataResponseSerializer())
     }
     
     /**
@@ -174,7 +162,7 @@ extension DownloadRequest {
      - returns: The response.
      */
     public func responseJSON(options: JSONSerialization.ReadingOptions = .allowFragments) -> DownloadResponse<Any> {
-        return response(responseSerializer: DownloadRequest.jsonResponseSerializer(options: options))
+        return response(responseSerializer: JSONResponseSerializer(options: options))
     }
     
     /**
@@ -187,17 +175,6 @@ extension DownloadRequest {
      - returns: The response.
      */
     public func responseString(encoding: String.Encoding? = nil) -> DownloadResponse<String> {
-        return response(responseSerializer: DownloadRequest.stringResponseSerializer(encoding: encoding))
-    }
-    
-    /**
-     Wait for the request to finish then return the response value.
-     
-     - parameter options: The property list reading options. Defaults to `[]`.
-     
-     - returns: The response.
-     */
-    public func responsePropertyList(options: PropertyListSerialization.ReadOptions = PropertyListSerialization.ReadOptions()) -> DownloadResponse<Any> {
-        return response(responseSerializer: DownloadRequest.propertyListResponseSerializer(options: options))
+        return response(responseSerializer: StringResponseSerializer(encoding: encoding))
     }
 }
