@@ -17,10 +17,10 @@ extension DataRequest {
      
      - returns: The response.
      */
-    public func response() -> DataResponse<Data?> {
+    public func response() -> AFDataResponse<Data?> {
         
         let semaphore = DispatchSemaphore(value: 0)
-        var result: DataResponse<Data?>!
+        var result: AFDataResponse<Data?>!
         
         self.response(queue: DispatchQueue.global(qos: .default)) { response in
             
@@ -41,10 +41,10 @@ extension DataRequest {
      and data.
      - returns: The response.
      */
-    public func response<T: DataResponseSerializerProtocol>(responseSerializer: T) -> DataResponse<T.SerializedObject> {
+    public func response<T: DataResponseSerializerProtocol>(responseSerializer: T) -> AFDataResponse<T.SerializedObject> {
         
         let semaphore = DispatchSemaphore(value: 0)
-        var result: DataResponse<T.SerializedObject>!
+        var result: AFDataResponse<T.SerializedObject>!
         
         self.response(queue: DispatchQueue.global(qos: .default), responseSerializer: responseSerializer) { response in
             
@@ -64,7 +64,7 @@ extension DataRequest {
      
      - returns: The response.
      */
-    public func responseData() -> DataResponse<Data> {
+    public func responseData() -> AFDataResponse<Data> {
         return response(responseSerializer: DataResponseSerializer())
     }
     
@@ -76,7 +76,7 @@ extension DataRequest {
      
      - returns: The response.
      */
-    public func responseJSON(options: JSONSerialization.ReadingOptions = .allowFragments) -> DataResponse<Any> {
+    public func responseJSON(options: JSONSerialization.ReadingOptions = .allowFragments) -> AFDataResponse<Any> {
         return response(responseSerializer: JSONResponseSerializer(options: options))
     }
     
@@ -90,7 +90,7 @@ extension DataRequest {
      
      - returns: The response.
      */
-    public func responseString(encoding: String.Encoding? = nil) -> DataResponse<String> {
+    public func responseString(encoding: String.Encoding? = nil) -> AFDataResponse<String> {
         return response(responseSerializer: StringResponseSerializer(encoding: encoding))
     }
 }
@@ -102,10 +102,10 @@ extension DownloadRequest {
      
      - returns: The response.
      */
-    public func response() -> DownloadResponse<URL?> {
+    public func response() -> AFDownloadResponse<URL?> {
         
         let semaphore = DispatchSemaphore(value: 0)
-        var result: DownloadResponse<URL?>!
+        var result: AFDownloadResponse<URL?>!
         
         self.response(queue: DispatchQueue.global(qos: .default)) { response in
             
@@ -127,10 +127,10 @@ extension DownloadRequest {
      and data.
      - returns: The response.
      */
-    public func response<T: DownloadResponseSerializerProtocol>(responseSerializer: T) -> DownloadResponse<T.SerializedObject> {
+    public func response<T: DownloadResponseSerializerProtocol>(responseSerializer: T) -> AFDownloadResponse<T.SerializedObject> {
         
         let semaphore = DispatchSemaphore(value: 0)
-        var result: DownloadResponse<T.SerializedObject>!
+        var result: AFDownloadResponse<T.SerializedObject>!
         
         self.response(queue: DispatchQueue.global(qos: .background), responseSerializer: responseSerializer) { response in
             
@@ -150,7 +150,7 @@ extension DownloadRequest {
      
      - returns: The response.
      */
-    public func responseData() -> DownloadResponse<Data> {
+    public func responseData() -> AFDownloadResponse<Data> {
         return response(responseSerializer: DataResponseSerializer())
     }
     
@@ -161,7 +161,7 @@ extension DownloadRequest {
      
      - returns: The response.
      */
-    public func responseJSON(options: JSONSerialization.ReadingOptions = .allowFragments) -> DownloadResponse<Any> {
+    public func responseJSON(options: JSONSerialization.ReadingOptions = .allowFragments) -> AFDownloadResponse<Any> {
         return response(responseSerializer: JSONResponseSerializer(options: options))
     }
     
@@ -174,7 +174,7 @@ extension DownloadRequest {
      
      - returns: The response.
      */
-    public func responseString(encoding: String.Encoding? = nil) -> DownloadResponse<String> {
+    public func responseString(encoding: String.Encoding? = nil) -> AFDownloadResponse<String> {
         return response(responseSerializer: StringResponseSerializer(encoding: encoding))
     }
 }
