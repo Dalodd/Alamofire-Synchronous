@@ -17,10 +17,10 @@ extension DataRequest {
      
      - returns: The response.
      */
-    public func response() -> DefaultDataResponse {
+    public func response() -> AFDataResponse<Data?> {
         
         let semaphore = DispatchSemaphore(value: 0)
-        var result: DefaultDataResponse!
+        var result: AFDataResponse<Data?>!
         
         self.response(queue: DispatchQueue.global(qos: .default)) { response in
             
@@ -41,10 +41,10 @@ extension DataRequest {
      and data.
      - returns: The response.
      */
-    public func response<T: DataResponseSerializerProtocol>(responseSerializer: T) -> DataResponse<T.SerializedObject> {
+    public func response<T: DataResponseSerializerProtocol>(responseSerializer: T) -> AFDataResponse<T.SerializedObject> {
         
         let semaphore = DispatchSemaphore(value: 0)
-        var result: DataResponse<T.SerializedObject>!
+        var result: AFDataResponse<T.SerializedObject>!
         
         self.response(queue: DispatchQueue.global(qos: .default), responseSerializer: responseSerializer) { response in
             
@@ -64,8 +64,8 @@ extension DataRequest {
      
      - returns: The response.
      */
-    public func responseData() -> DataResponse<Data> {
-        return response(responseSerializer: DataRequest.dataResponseSerializer())
+    public func responseData() -> AFDataResponse<Data> {
+        return response(responseSerializer: DataResponseSerializer())
     }
     
     
@@ -76,8 +76,8 @@ extension DataRequest {
      
      - returns: The response.
      */
-    public func responseJSON(options: JSONSerialization.ReadingOptions = .allowFragments) -> DataResponse<Any> {
-        return response(responseSerializer: DataRequest.jsonResponseSerializer(options: options))
+    public func responseJSON(options: JSONSerialization.ReadingOptions = .allowFragments) -> AFDataResponse<Any> {
+        return response(responseSerializer: JSONResponseSerializer(options: options))
     }
     
     
@@ -90,20 +90,8 @@ extension DataRequest {
      
      - returns: The response.
      */
-    public func responseString(encoding: String.Encoding? = nil) -> DataResponse<String> {
-        return response(responseSerializer: DataRequest.stringResponseSerializer(encoding: encoding))
-    }
-    
-    
-    /**
-     Wait for the request to finish then return the response value.
-     
-     - parameter options: The property list reading options. Defaults to `[]`.
-     
-     - returns: The response.
-     */
-    public func responsePropertyList(options: PropertyListSerialization.ReadOptions = PropertyListSerialization.ReadOptions()) -> DataResponse<Any> {
-        return response(responseSerializer: DataRequest.propertyListResponseSerializer(options: options))
+    public func responseString(encoding: String.Encoding? = nil) -> AFDataResponse<String> {
+        return response(responseSerializer: StringResponseSerializer(encoding: encoding))
     }
 }
 
@@ -114,10 +102,10 @@ extension DownloadRequest {
      
      - returns: The response.
      */
-    public func response() -> DefaultDownloadResponse {
+    public func response() -> AFDownloadResponse<URL?> {
         
         let semaphore = DispatchSemaphore(value: 0)
-        var result: DefaultDownloadResponse!
+        var result: AFDownloadResponse<URL?>!
         
         self.response(queue: DispatchQueue.global(qos: .default)) { response in
             
@@ -139,10 +127,10 @@ extension DownloadRequest {
      and data.
      - returns: The response.
      */
-    public func response<T: DownloadResponseSerializerProtocol>(responseSerializer: T) -> DownloadResponse<T.SerializedObject> {
+    public func response<T: DownloadResponseSerializerProtocol>(responseSerializer: T) -> AFDownloadResponse<T.SerializedObject> {
         
         let semaphore = DispatchSemaphore(value: 0)
-        var result: DownloadResponse<T.SerializedObject>!
+        var result: AFDownloadResponse<T.SerializedObject>!
         
         self.response(queue: DispatchQueue.global(qos: .background), responseSerializer: responseSerializer) { response in
             
@@ -162,8 +150,8 @@ extension DownloadRequest {
      
      - returns: The response.
      */
-    public func responseData() -> DownloadResponse<Data> {
-        return response(responseSerializer: DownloadRequest.dataResponseSerializer())
+    public func responseData() -> AFDownloadResponse<Data> {
+        return response(responseSerializer: DataResponseSerializer())
     }
     
     /**
@@ -173,8 +161,8 @@ extension DownloadRequest {
      
      - returns: The response.
      */
-    public func responseJSON(options: JSONSerialization.ReadingOptions = .allowFragments) -> DownloadResponse<Any> {
-        return response(responseSerializer: DownloadRequest.jsonResponseSerializer(options: options))
+    public func responseJSON(options: JSONSerialization.ReadingOptions = .allowFragments) -> AFDownloadResponse<Any> {
+        return response(responseSerializer: JSONResponseSerializer(options: options))
     }
     
     /**
@@ -186,18 +174,7 @@ extension DownloadRequest {
      
      - returns: The response.
      */
-    public func responseString(encoding: String.Encoding? = nil) -> DownloadResponse<String> {
-        return response(responseSerializer: DownloadRequest.stringResponseSerializer(encoding: encoding))
-    }
-    
-    /**
-     Wait for the request to finish then return the response value.
-     
-     - parameter options: The property list reading options. Defaults to `[]`.
-     
-     - returns: The response.
-     */
-    public func responsePropertyList(options: PropertyListSerialization.ReadOptions = PropertyListSerialization.ReadOptions()) -> DownloadResponse<Any> {
-        return response(responseSerializer: DownloadRequest.propertyListResponseSerializer(options: options))
+    public func responseString(encoding: String.Encoding? = nil) -> AFDownloadResponse<String> {
+        return response(responseSerializer: StringResponseSerializer(encoding: encoding))
     }
 }
